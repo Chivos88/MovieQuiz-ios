@@ -101,6 +101,8 @@ final class MovieQuizViewController: UIViewController {
     }
     
     private func showQuestion(quiz step: QuizStepViewModel) {
+        yesButton.isEnabled = true
+        noButton.isEnabled = true
         imagePreview.layer.borderColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0)
         imagePreview.image = step.image
         textQuestion.text = step.question
@@ -143,11 +145,15 @@ final class MovieQuizViewController: UIViewController {
     
     
     @IBAction private func yesButtonClicked(_ sender: Any) {
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
         let currentQuestion = questions[currentQuestionIndex]
         showAnswerResult(isCorrect: currentQuestion.correctAnswer == true)
     }
     
     @IBAction private func noButtonClicked(_ sender: Any) {
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
         let currentQuestion = questions[currentQuestionIndex]
         showAnswerResult(isCorrect: currentQuestion.correctAnswer == false)
     }
