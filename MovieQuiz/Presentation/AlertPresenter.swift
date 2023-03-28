@@ -9,18 +9,18 @@ class AlertPresenter {
         self.delegete = delegete
     }
     
-    func showAlert(alertData: AlertModel) {
+    func showAlert(alertModel: AlertModel) {
         let alert = UIAlertController(
-                title: alertData.title,
-                message: alertData.message,
+                title: alertModel.title,
+                message: alertModel.message,
                 preferredStyle: .alert)
         
-        let action = UIAlertAction(title: alertData.buttonText, style: .default) {_ in
-            alertData.completion()
+        let action = UIAlertAction(title: alertModel.buttonText, style: .default) {_ in
+            alertModel.completion()
             }
             
         alert.addAction(action)
             
-        self.delegete?.present(alert, animated: true, completion: nil)
+        delegete?.present(alert, animated: true, completion: nil)
     }
 }
