@@ -10,7 +10,7 @@ final class StatisticServiceImplementation: StatisticService {
     
     var totalAccuracy: Double {
         get {
-            return Double(self.correct/(self.total == 0 ? 1 : self.total)*100)
+            return Double(self.correct)/(self.total == 0 ? 1 : Double(self.total))*100
         }
     }
     var correct: Int {
@@ -56,13 +56,9 @@ final class StatisticServiceImplementation: StatisticService {
     }
     
     func store(correct count: Int, total amount: Int) {
-        
-        self.gamesCount = self.gamesCount + 1
-        
-        self.correct = self.correct + correct
-        
-        self.total = self.total + total
-        
+        self.gamesCount += 1
+        self.correct += count
+        self.total += amount
         
         let currentGame = GameRecord(correct: count, total: amount, date: Date())
         

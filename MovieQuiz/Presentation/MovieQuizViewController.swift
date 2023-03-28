@@ -10,6 +10,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var currentQuestion: QuizQuestion?
     private var statisticService: StatisticService?
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     @IBOutlet weak private var yesButton: UIButton!
     @IBOutlet weak private var noButton: UIButton!
     @IBOutlet weak private var imagePreview: UIImageView!
@@ -19,6 +23,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         statisticService = StatisticServiceImplementation()
         
@@ -88,9 +93,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             var text: String
             if let statisticService = self.statisticService {
                 text = """
-Ваш результат: \(self.correctAnswers) из \(self.questionsAmount)\n
-Количество сыграных квизов: \(String(describing: statisticService.gamesCount))\n
-Рекорд: \(String(describing: statisticService.bestGame.correct))/\(String(describing: statisticService.bestGame.total)) (\(String(describing: statisticService.bestGame.date.dateTimeString)))\n
+Ваш результат: \(self.correctAnswers) из \(self.questionsAmount)
+Количество сыграных квизов: \(String(describing: statisticService.gamesCount))
+Рекорд: \(String(describing: statisticService.bestGame.correct))/\(String(describing: statisticService.bestGame.total)) (\(String(describing: statisticService.bestGame.date.dateTimeString)))
 Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
 """
             } else {
