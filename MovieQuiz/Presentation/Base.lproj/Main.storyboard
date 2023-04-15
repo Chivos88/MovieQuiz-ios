@@ -52,7 +52,7 @@
                                     </stackView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YGw-DC-X7g" userLabel="Preview Image">
                                         <rect key="frame" x="0.0" y="44" width="353" height="529.66666666666663"/>
-                                        <color key="backgroundColor" name="ypWhite"/>
+                                        <color key="backgroundColor" name="ypBlack"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="YGw-DC-X7g" secondAttribute="height" multiplier="2:3" id="aGw-nb-2Ol"/>
                                         </constraints>
@@ -127,17 +127,23 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" hidesWhenStopped="YES" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="TrC-Qp-ve8">
+                                <rect key="frame" x="186" y="416" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="ypBlack"/>
                         <constraints>
                             <constraint firstItem="xf1-se-n64" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="JPZ-Aq-u9V"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="xf1-se-n64" secondAttribute="trailing" constant="20" id="NX8-UI-MUS"/>
+                            <constraint firstItem="TrC-Qp-ve8" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="X5N-Yc-cZv"/>
                             <constraint firstItem="xf1-se-n64" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="mnL-nt-Yna"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="xf1-se-n64" secondAttribute="bottom" id="nqy-OL-sa2"/>
+                            <constraint firstItem="TrC-Qp-ve8" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="s40-Gq-FVu"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="TrC-Qp-ve8" id="H2e-zX-Pqz"/>
                         <outlet property="imagePreview" destination="YGw-DC-X7g" id="90Y-a0-Dv8"/>
                         <outlet property="indexQuestion" destination="bdM-dE-UPy" id="ATi-c7-3a2"/>
                         <outlet property="noButton" destination="pM6-aT-2Xu" id="D8c-D9-BN8"/>
