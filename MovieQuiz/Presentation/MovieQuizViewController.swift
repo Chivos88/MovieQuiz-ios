@@ -19,7 +19,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet weak private var imagePreview: UIImageView!
     @IBOutlet weak private var indexQuestion: UILabel!
     @IBOutlet weak private var textQuestion: UILabel!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak private var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,13 +31,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         questionFactory?.requestNextQuestion()
         
-        isShowLoadingIndicator(flag: true)
+        showLoadingIndicator(isShow: true)
         questionFactory?.loadData()
         
     }
-    private func isShowLoadingIndicator(flag: Bool) {
-        activityIndicator.isHidden = !flag
-        if flag == true {
+    private func showLoadingIndicator(isShow: Bool) {
+        if isShow {
             activityIndicator.startAnimating()
         } else {
             activityIndicator.stopAnimating()
@@ -124,30 +123,31 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
-    private func showNetworkError(message: String) {
-        isShowLoadingIndicator(flag: false)
+    func showNetworkError(message: String, buttonAction: @escaping ()-> Void) {
+        showLoadingIndicator(isShow: false)
         
-        let alertModel = AlertModel(title: "Ошибка", message: message, buttonText: "Попробовать еще раз") {[weak self] in
-            guard let self = self else { return }
-            
-            self.currentQuestionIndex = 0
-            self.correctAnswers = 0
-            
-            self.questionFactory?.requestNextQuestion()
-            self.isShowLoadingIndicator(flag: true)
-            self.questionFactory?.loadData()
-            
-        }
+        let alertModel = AlertModel(title: "Ошибка", message: message, buttonText: "Попробовать еще раз", completion: buttonAction)
         let alertPresenter = AlertPresenter(delegete: self)
         alertPresenter.showAlert(alertModel: alertModel)
     }
     func didLoadDataFromServer() {
-        isShowLoadingIndicator(flag: false)
+        showLoadingIndicator(isShow: false)
         questionFactory?.requestNextQuestion()
     }
 
     func didFailToLoadData(with error: Error) {
-        showNetworkError(message: error.localizedDescription)
+        showNetworkError(message: error.localizedDescription) {
+            [weak self] in
+                guard let self = self else { return }
+                
+                //self.currentQuestionIndex = 0
+                //self.correctAnswers = 0
+                
+                self.questionFactory?.requestNextQuestion()
+                self.showLoadingIndicator(isShow: true)
+                self.questionFactory?.loadData()
+                
+        }
     }
     
     @IBAction private func yesButtonClicked(_ sender: Any) {
