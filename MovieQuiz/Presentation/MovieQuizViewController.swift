@@ -4,7 +4,7 @@ import UIKit
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var correctAnswers: Int = 0
     private var questionFactory: QuestionFactoryProtocol?
-    private var currentQuestion: QuizQuestion?
+    
     private var statisticService: StatisticService?
     private let presenter = MovieQuizPresenter()
     
@@ -22,6 +22,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        presenter.viewController = self
         
         statisticService = StatisticServiceImplementation()
         
@@ -42,14 +43,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question else { return }
-        currentQuestion = question
+        presenter.currentQuestion = question
         let viewModel = presenter.convert(model: question)
         DispatchQueue.main.async { [weak self] in
             self?.showQuestion(quiz: viewModel)
         }
     }
     
-    private func showAnswerResult(isCorrect: Bool) {
+    func showAnswerResult(isCorrect: Bool) {
         if isCorrect {
             correctAnswers += 1
         }
@@ -141,19 +142,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBAction private func yesButtonClicked(_ sender: Any) {
         yesButton.isEnabled = false
         noButton.isEnabled = false
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        showAnswerResult(isCorrect: currentQuestion.correctAnswer == true)
+        presenter.yesButtonClicked()
     }
     
     @IBAction private func noButtonClicked(_ sender: Any) {
         yesButton.isEnabled = false
         noButton.isEnabled = false
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        showAnswerResult(isCorrect: currentQuestion.correctAnswer == false)
+        presenter.noButtonClicked()
     }
     
 }
