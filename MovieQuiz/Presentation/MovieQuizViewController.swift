@@ -30,18 +30,10 @@ final class MovieQuizViewController: UIViewController {
         }
     }
     
-    func showAnswerResult(isCorrect: Bool) {
-        presenter.didAnswer(isCorrectAnswer: isCorrect)
-        
+    func highlightImageBorder(isCorrectAnswer: Bool) {
         imagePreview.layer.masksToBounds = true
         imagePreview.layer.borderWidth = 8
-        imagePreview.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
-            
-            self.presenter.showNextQuestionOrResults()
-        }
+        imagePreview.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
     }
     
     func showQuestion(quiz step: QuizStepViewModel) {

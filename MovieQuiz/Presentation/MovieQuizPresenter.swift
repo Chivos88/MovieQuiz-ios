@@ -46,7 +46,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             return
         }
         
-        viewController?.showAnswerResult(isCorrect: isYes == currentQuestion.correctAnswer)
+        self.showAnswerResult(isCorrect: isYes == currentQuestion.correctAnswer)
     }
     func yesButtonClicked() {
         didAnswer(isYes: true)
@@ -116,6 +116,17 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             self.questionFactory?.requestNextQuestion()
         }
     }
+    
+    func showAnswerResult(isCorrect: Bool) {
+            didAnswer(isCorrectAnswer: isCorrect)
+            
+            viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                guard let self = self else { return }
+                self.showNextQuestionOrResults()
+            }
+        }
     
     func showNetworkError(message: String, buttonAction: @escaping ()-> Void) {
         guard let viewController = viewController else { return }
