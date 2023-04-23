@@ -20,6 +20,7 @@ class AlertPresenter {
             }
             
         alert.addAction(action)
+        alert.view.accessibilityIdentifier = "Results"
             
         delegete?.present(alert, animated: true, completion: nil)
     }
