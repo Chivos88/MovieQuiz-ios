@@ -1,13 +1,21 @@
 
 import UIKit
 
-final class MovieQuizPresenter {
+final class MovieQuizPresenter: QuestionFactoryDelegate {
     let questionsAmount: Int = 10
     private var currentQuestionIndex: Int = 0
     var correctAnswers: Int = 0
     var questionFactory: QuestionFactoryProtocol?
     var currentQuestion: QuizQuestion?
     weak var viewController: MovieQuizViewController?
+    
+    init(viewController: MovieQuizViewController) {
+            self.viewController = viewController
+            
+            questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+            questionFactory?.loadData()
+            viewController.showLoadingIndicator(isShow: true)
+        }
     
     func isLastQuestion() -> Bool {
         currentQuestionIndex == questionsAmount - 1
@@ -62,6 +70,23 @@ final class MovieQuizPresenter {
         }
     }
     
+    func didLoadDataFromServer() {
+        viewController?.showLoadingIndicator(isShow: false)
+        questionFactory?.requestNextQuestion()
+    }
+    
+    func didFailToLoadData(with error: Error) {
+        viewController?.showNetworkError(message: error.localizedDescription) {
+            [weak self] in
+            guard let self = self else { return }
+            
+            self.questionFactory?.requestNextQuestion()
+            self.viewController?.showLoadingIndicator(isShow: true)
+            self.questionFactory?.loadData()
+            
+        }
+    }
+    
     func showNextQuestionOrResults() {
         if self.isLastQuestion() {
             guard let viewController = viewController else {return}
@@ -88,5 +113,14 @@ final class MovieQuizPresenter {
             
             self.questionFactory?.requestNextQuestion()
         }
+    }
+    
+    func showNetworkError(message: String, buttonAction: @escaping ()-> Void) {
+        guard let viewController = viewController else { return }
+        viewController.showLoadingIndicator(isShow: false)
+        
+        let alertModel = AlertModel(title: "Ошибка", message: message, buttonText: "Попробовать еще раз", completion: buttonAction)
+        let alertPresenter = AlertPresenter(delegete: viewController)
+        alertPresenter.showAlert(alertModel: alertModel)
     }
 }

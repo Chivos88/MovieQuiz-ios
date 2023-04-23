@@ -1,11 +1,9 @@
 import UIKit
 
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
-    var questionFactory: QuestionFactoryProtocol?
-    
+final class MovieQuizViewController: UIViewController {
     var statisticService: StatisticService?
-    private let presenter = MovieQuizPresenter()
+    private var presenter: MovieQuizPresenter!
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -21,19 +19,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        presenter.viewController = self
+        presenter = MovieQuizPresenter(viewController: self)
         
         statisticService = StatisticServiceImplementation()
         
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
-        
-        questionFactory?.requestNextQuestion()
-        
         showLoadingIndicator(isShow: true)
-        questionFactory?.loadData()
-        
     }
-    private func showLoadingIndicator(isShow: Bool) {
+    func showLoadingIndicator(isShow: Bool) {
         if isShow {
             activityIndicator.startAnimating()
         } else {
@@ -51,7 +43,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
             
-            self.presenter.questionFactory = self.questionFactory
             self.presenter.showNextQuestionOrResults()
         }
     }
@@ -83,26 +74,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         let alertPresenter = AlertPresenter(delegete: self)
         alertPresenter.showAlert(alertModel: alertModel)
     }
-    func didRecieveNextQuestion(question: QuizQuestion?) {
-        presenter.didRecieveNextQuestion(question: question)
-    }
     
-    func didLoadDataFromServer() {
-        showLoadingIndicator(isShow: false)
-        questionFactory?.requestNextQuestion()
-    }
-    
-    func didFailToLoadData(with error: Error) {
-        showNetworkError(message: error.localizedDescription) {
-            [weak self] in
-            guard let self = self else { return }
-            
-            self.questionFactory?.requestNextQuestion()
-            self.showLoadingIndicator(isShow: true)
-            self.questionFactory?.loadData()
-            
-        }
-    }
     
     @IBAction private func yesButtonClicked(_ sender: Any) {
         yesButton.isEnabled = false
