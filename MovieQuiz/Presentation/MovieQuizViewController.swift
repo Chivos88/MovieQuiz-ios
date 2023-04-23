@@ -1,7 +1,17 @@
 import UIKit
 
+protocol MovieQuizViewControllerProtocol: AnyObject {
+    func showQuestion(quiz step: QuizStepViewModel)
+    func showResult(quiz result: QuizResultsViewModel)
+    
+    func highlightImageBorder(isCorrectAnswer: Bool)
+    
+    func showLoadingIndicator(isShow: Bool)
+    
+    func showNetworkError(alertModel: AlertModel)
+}
 
-final class MovieQuizViewController: UIViewController {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     private var presenter: MovieQuizPresenter!
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -56,10 +66,9 @@ final class MovieQuizViewController: UIViewController {
         alertPresenter.showAlert(alertModel: alertModel)
     }
     
-    func showNetworkError(message: String, buttonAction: @escaping ()-> Void) {
+    func showNetworkError(alertModel: AlertModel) {
         showLoadingIndicator(isShow: false)
-        
-        let alertModel = AlertModel(title: "Ошибка", message: message, buttonText: "Попробовать еще раз", completion: buttonAction)
+
         let alertPresenter = AlertPresenter(delegete: self)
         alertPresenter.showAlert(alertModel: alertModel)
     }

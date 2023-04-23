@@ -7,10 +7,10 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var correctAnswers: Int = 0
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
-    private weak var viewController: MovieQuizViewController?
+    private weak var viewController: MovieQuizViewControllerProtocol?
     private let statisticService: StatisticService!
     
-    init(viewController: MovieQuizViewController) {
+    init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
         
         statisticService = StatisticServiceImplementation()
@@ -79,7 +79,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     func didFailToLoadData(with error: Error) {
-        viewController?.showNetworkError(message: error.localizedDescription) {
+        self.showNetworkError(message: error.localizedDescription) {
             [weak self] in
             guard let self = self else { return }
             
@@ -129,11 +129,8 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
     
     func showNetworkError(message: String, buttonAction: @escaping ()-> Void) {
-        guard let viewController = viewController else { return }
-        viewController.showLoadingIndicator(isShow: false)
         
         let alertModel = AlertModel(title: "Ошибка", message: message, buttonText: "Попробовать еще раз", completion: buttonAction)
-        let alertPresenter = AlertPresenter(delegete: viewController)
-        alertPresenter.showAlert(alertModel: alertModel)
+        viewController?.showNetworkError(alertModel: alertModel)
     }
 }
