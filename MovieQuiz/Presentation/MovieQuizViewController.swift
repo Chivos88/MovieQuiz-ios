@@ -2,7 +2,6 @@ import UIKit
 
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
-    var correctAnswers: Int = 0
     var questionFactory: QuestionFactoryProtocol?
     
     var statisticService: StatisticService?
@@ -43,9 +42,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     func showAnswerResult(isCorrect: Bool) {
-        if isCorrect {
-            correctAnswers += 1
-        }
+        presenter.didAnswer(isCorrectAnswer: isCorrect)
         
         imagePreview.layer.masksToBounds = true
         imagePreview.layer.borderWidth = 8
@@ -53,9 +50,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
-            self.presenter.correctAnswers = self.correctAnswers
+            
             self.presenter.questionFactory = self.questionFactory
-            self.presenter.showNextQuestionOrResults()        }
+            self.presenter.showNextQuestionOrResults()
+        }
     }
     
     func showQuestion(quiz step: QuizStepViewModel) {
@@ -71,41 +69,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         let alertModel = AlertModel(title: result.title, message: result.text, buttonText: result.buttonText) { [weak self] in
             guard let self = self else { return }
             
-            self.correctAnswers = 0
-            self.presenter.resetQuestionIndex()
-            self.questionFactory?.requestNextQuestion()
-            
+            self.presenter.restartGame()
         }
         
         let alertPresenter = AlertPresenter(delegete: self)
         alertPresenter.showAlert(alertModel: alertModel)
-    }
-    
-    private func showNextQuestionOrResults() {
-        if presenter.isLastQuestion() {
-            statisticService?.store(correct: self.correctAnswers, total: presenter.questionsAmount)
-            
-            var text: String
-            if let statisticService = self.statisticService {
-                text = """
-Ваш результат: \(self.correctAnswers) из \(presenter.questionsAmount)
-Количество сыграных квизов: \(String(describing: statisticService.gamesCount))
-Рекорд: \(String(describing: statisticService.bestGame.correct))/\(String(describing: statisticService.bestGame.total)) (\(String(describing: statisticService.bestGame.date.dateTimeString)))
-Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
-"""
-            } else {
-                text = "Что-то пошло не так"
-            }
-            let viewModel = QuizResultsViewModel(
-                title: "Этот раунд окончен!",
-                text: text,
-                buttonText: "Сыграть ещё раз")
-            showResult(quiz: viewModel)
-        } else {
-            presenter.switchToNextQuestion()
-            
-            questionFactory?.requestNextQuestion()
-        }
     }
     
     func showNetworkError(message: String, buttonAction: @escaping ()-> Void) {

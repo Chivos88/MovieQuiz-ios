@@ -13,8 +13,10 @@ final class MovieQuizPresenter {
         currentQuestionIndex == questionsAmount - 1
     }
     
-    func resetQuestionIndex() {
+    func restartGame() {
         currentQuestionIndex = 0
+        correctAnswers = 0
+        questionFactory?.requestNextQuestion()
     }
     
     func switchToNextQuestion() {
@@ -54,15 +56,21 @@ final class MovieQuizPresenter {
         }
     }
     
+    func didAnswer(isCorrectAnswer: Bool) {
+        if isCorrectAnswer {
+            correctAnswers += 1
+        }
+    }
+    
     func showNextQuestionOrResults() {
         if self.isLastQuestion() {
             guard let viewController = viewController else {return}
-            viewController.statisticService?.store(correct: viewController.correctAnswers, total: self.questionsAmount)
+            viewController.statisticService?.store(correct: self.correctAnswers, total: self.questionsAmount)
             
             var text: String
             if let statisticService = viewController.statisticService {
                 text = """
-Ваш результат: \(viewController.correctAnswers) из \(self.questionsAmount)
+Ваш результат: \(self.correctAnswers) из \(self.questionsAmount)
 Количество сыграных квизов: \(String(describing: statisticService.gamesCount))
 Рекорд: \(String(describing: statisticService.bestGame.correct))/\(String(describing: statisticService.bestGame.total)) (\(String(describing: statisticService.bestGame.date.dateTimeString)))
 Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
