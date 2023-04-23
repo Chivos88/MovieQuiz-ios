@@ -2,7 +2,6 @@ import UIKit
 
 
 final class MovieQuizViewController: UIViewController {
-    var statisticService: StatisticService?
     private var presenter: MovieQuizPresenter!
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -20,8 +19,6 @@ final class MovieQuizViewController: UIViewController {
         super.viewDidLoad()
         
         presenter = MovieQuizPresenter(viewController: self)
-        
-        statisticService = StatisticServiceImplementation()
         
         showLoadingIndicator(isShow: true)
     }
